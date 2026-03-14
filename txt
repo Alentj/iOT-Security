@@ -1,7 +1,0 @@
-telegram bot token : 8737792132:AAE4v2rqzfoTKvPVceWrSoqs1zIWQ2b9uDE
-/start
-
-
-Id: 1531622710
-
-{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUzNjJmNjY3NWNkYTI1OTI3ZGYzNSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MzQ4NTE5MSwiZXhwIjoxNzczNDg4NzkxfQ.Im-GL_TTPS92nZIm-OPQ_IC-fugCy7GYntIvzzJJTTo"}
