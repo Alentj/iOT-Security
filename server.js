@@ -8,6 +8,9 @@ const dataRoutes = require("./routes/dataRoutes")
 const authRoutes = require("./routes/authRoutes")
 const adminRoutes = require("./routes/adminRoutes")
 const deviceRoutes = require("./routes/deviceRoutes")
+const deviceRoutes = require("./routes/deviceRoutes")
+
+app.use("/devices", deviceRoutes)
 
 const app = express()
 

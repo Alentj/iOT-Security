@@ -1,0 +1,153 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <Preferences.h>
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+/* Server URLs */
+
+String provisionURL = "http://YOUR_SERVER_IP:3000/devices/provision";
+String dataURL = "http://YOUR_SERVER_IP:3000/api/data";
+
+/* Soil sensor pin */
+
+int sensorPin = 34;
+
+/* Device credentials */
+
+String device_id="";
+String token="";
+
+Preferences prefs;
+
+void connectWiFi(){
+
+WiFi.begin(ssid,password);
+
+Serial.print("Connecting");
+
+while(WiFi.status()!=WL_CONNECTED){
+delay(1000);
+Serial.print(".");
+}
+
+Serial.println("\nWiFi connected");
+
+}
+
+void provisionDevice(){
+
+Serial.println("Provisioning device...");
+
+HTTPClient http;
+
+http.begin(provisionURL);
+
+http.addHeader("Content-Type","application/json");
+
+int httpCode = http.POST("{}");
+
+if(httpCode==200){
+
+String payload = http.getString();
+
+Serial.println(payload);
+
+DynamicJsonDocument doc(512);
+
+deserializeJson(doc,payload);
+
+device_id = doc["device_id"].as<String>();
+token = doc["token"].as<String>();
+
+/* Save credentials */
+
+prefs.begin("device",false);
+
+prefs.putString("device_id",device_id);
+prefs.putString("token",token);
+
+prefs.end();
+
+Serial.println("Device provisioned");
+
+}
+
+http.end();
+
+}
+
+void loadCredentials(){
+
+prefs.begin("device",true);
+
+device_id = prefs.getString("device_id","");
+token = prefs.getString("token","");
+
+prefs.end();
+
+}
+
+void sendSensorData(){
+
+HTTPClient http;
+
+http.begin(dataURL);
+
+http.addHeader("Content-Type","application/json");
+
+int moisture = analogRead(sensorPin);
+
+String json = "{";
+
+json += "\"device_id\":\""+device_id+"\",";
+json += "\"token\":\""+token+"\",";
+json += "\"soil_moisture\":"+String(moisture)+",";
+json += "\"timestamp\":"+String(millis());
+
+json += "}";
+
+int code = http.POST(json);
+
+Serial.print("Response: ");
+Serial.println(code);
+
+String response = http.getString();
+
+Serial.println(response);
+
+http.end();
+
+}
+
+void setup(){
+
+Serial.begin(115200);
+
+connectWiFi();
+
+loadCredentials();
+
+/* First boot → provision device */
+
+if(device_id==""){
+
+provisionDevice();
+
+}
+
+}
+
+void loop(){
+
+if(WiFi.status()==WL_CONNECTED){
+
+sendSensorData();
+
+}
+
+delay(10000);   // send every 10 sec
+
+}
