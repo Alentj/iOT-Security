@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Alerts</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>IoT Panel</h2>
+<a href="dashboard.html">Overview</a>
+<a href="devices.html">Devices</a>
+<a href="alerts.html">Alerts</a>
+<a href="analytics.html">Analytics</a>
+</div>
+
+<div class="main">
+
+<h1>🚨 Security Alerts</h1>
+
+<ul id="eventFeed"></ul>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+loadSecurityEvents()
+</script>
+
+</body>
+</html>

@@ -10,13 +10,18 @@
 <div class="sidebar">
 <h2>IoT Panel</h2>
 
-<a href="dashboard.html">Dashboard</a>
+<a href="dashboard.html">Overview</a>
 <a href="devices.html">Devices</a>
-<a href="logs.html">Security Logs</a>
+<a href="alerts.html">Alerts</a>
+<a href="analytics.html">Analytics</a>
 
 </div>
 
 <div class="main">
+
+<h1>📡 Device Management</h1>
+
+<!-- REGISTER DEVICE -->
 
 <h2>Register Device</h2>
 
@@ -25,9 +30,25 @@
 
 <button onclick="registerDevice()">Register</button>
 
+<!-- DEVICE LIST -->
+
+<h2>Registered Devices</h2>
+
+<table id="deviceTable">
+<tr>
+<th>Device</th>
+<th>Moisture</th>
+<th>Status</th>
+</tr>
+</table>
+
 </div>
 
 <script src="app.js"></script>
+
+<script>
+loadDevicesPage()
+</script>
 
 </body>
 </html>
