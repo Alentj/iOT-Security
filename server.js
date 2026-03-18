@@ -25,6 +25,6 @@ app.use("/auth", authRoutes)
 app.use("/admin", adminRoutes)
 app.use("/devices", deviceRoutes)   // ✅ ONLY HERE
 
-app.listen(3000, ()=>{
+app.listen(3000, "0.0.0.0" ,()=>{
  console.log("Secure IoT Server Running")
 })

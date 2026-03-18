@@ -1,40 +1,29 @@
 const express = require("express")
 const router = express.Router()
 
-const authDevice = require("../middleware/authDevice")
-const replay = require("../middleware/replayProtection")
-const validate = require("../security/validation")
-const anomaly = require("../security/anomalyDetection")
-
 const SensorData = require("../models/SensorData")
 
-router.post("/data",
-authDevice,
-replay,
-validate,
-anomaly,
-async(req,res)=>{
+// 🔥 POST (ESP sends data)
+router.post("/data", async (req, res) => {
 
-console.log("DATA API HIT")
-console.log(req.body)
- const {device_id,soil_moisture} = req.body
+  console.log("BODY:", req.body)
 
-const data = new SensorData({
+  const { device_id, soil_moisture } = req.body
 
-device_id,
-soil_moisture,
-timestamp: Date.now()
+  await SensorData.create({
+    device_id,
+    soil_moisture
+  })
 
+  res.send("OK")
 })
 
- await data.save()
+// 🔥 GET (Website fetches data)
+router.get("/latest", async (req, res) => {
 
- res.json({
+  const data = await SensorData.find().sort({ timestamp: -1 }).limit(1)
 
-  message:"Data stored securely"
-
- })
-
+  res.json(data)
 })
 
 module.exports = router
