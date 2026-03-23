@@ -1,54 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Devices</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Devices | SmartAgri Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
 
-<body>
+  <body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 20px;">
+        <h2 style="margin: 0;"><i class="fa-solid fa-microchip"></i> SmartAgri</h2>
+        <button class="mobile-close-btn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+        <a href="devices.html" class="active"><i class="fa-solid fa-server"></i> Devices</a>
+        <a href="alerts.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+        <a href="logs.html"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </nav>
 
-<div class="sidebar">
-<h2>IoT Panel</h2>
+    <!-- MAIN -->
+    <main class="main">
+      <div class="top-navbar">
+        <div class="nav-left">
+          <h1 style="font-size: 1.5rem; font-weight: 500;"><i class="fa-solid fa-satellite-dish"></i> Device Management</h1>
+        </div>
+        <div class="nav-right">
+          <span class="badge" id="navRoleBadge">Role</span>
+          <div class="avatar" id="navAvatar">U</div>
+          <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+      </div>
 
-<a href="dashboard.html">Overview</a>
-<a href="devices.html">Devices</a>
-<a href="alerts.html">Alerts</a>
-<a href="analytics.html">Analytics</a>
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-top: 20px;">
+        <!-- REGISTER FORM -->
+        <section>
+          <div class="card">
+            <h3 style="margin-bottom: 25px;"><i class="fa-solid fa-plus-circle"></i> Provision New Endpoint</h3>
+            <div class="form-group">
+              <label>Hardware Registration ID</label>
+              <input id="device_id" placeholder="e.g. SENSOR-NODE-001" />
+            </div>
+            <div class="form-group">
+              <label>Authentication Token</label>
+              <input id="token" type="password" placeholder="••••••••••••" />
+            </div>
+            <button class="action-btn" onclick="registerDevice()" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-link"></i> Securely Pair Device
+            </button>
+          </div>
+        </section>
 
-</div>
+        <!-- DEVICE LIST -->
+        <section>
+          <div class="card">
+            <h3 style="margin-bottom: 25px;"><i class="fa-solid fa-list-ul"></i> Registered Hardware Inventory</h3>
+            <div class="table-scroll">
+              <table id="deviceTable">
+                <thead>
+                  <tr>
+                    <th>Identifier</th>
+                    <th>Current Reading</th>
+                    <th>Operational Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
 
-<div class="main">
-
-<h1>📡 Device Management</h1>
-
-<!-- REGISTER DEVICE -->
-
-<h2>Register Device</h2>
-
-<input id="device_id" placeholder="Device ID">
-<input id="token" placeholder="Token">
-
-<button onclick="registerDevice()">Register</button>
-
-<!-- DEVICE LIST -->
-
-<h2>Registered Devices</h2>
-
-<table id="deviceTable">
-<tr>
-<th>Device</th>
-<th>Moisture</th>
-<th>Status</th>
-</tr>
-</table>
-
-</div>
-
-<script src="app.js"></script>
-
-<script>
-loadDevicesPage()
-</script>
-
-</body>
+    <script src="app.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => { loadDevicesPage(); });
+    </script>
+  </body>
 </html>

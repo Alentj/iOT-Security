@@ -1,13 +1,9 @@
-module.exports = (req,res,next)=>{
+module.exports = (req, res, next) => {
+  const { soil_moisture } = req.body
 
- const {soil_moisture} = req.body
+  if (typeof soil_moisture !== 'number') {
+    return res.status(400).send('Invalid data')
+  }
 
- if(typeof soil_moisture !== "number"){
-
-  return res.status(400).send("Invalid data")
-
- }
-
- next()
-
+  next()
 }

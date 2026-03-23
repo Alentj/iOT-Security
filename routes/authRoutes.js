@@ -1,139 +1,117 @@
-const express = require("express")
+const express = require('express')
 const router = express.Router()
-const jwt = require("jsonwebtoken")
-const User = require("../models/User")
-const sendAlert = require("../utils/telegram")
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+const sendAlert = require('../utils/telegram')
 
 // store failed login attempts
 const loginAttempts = {}
 
-
 /* ================= REGISTER ================= */
 
-router.post("/register", async (req,res)=>{
+router.post('/register', async (req, res) => {
+  try {
+    const { username, password } = req.body
 
-try{
+    const existing = await User.findOne({ username })
 
-const {username,password} = req.body
+    if (existing) {
+      return res.status(400).send('User already exists')
+    }
 
-const existing = await User.findOne({username})
+    const user = new User({
+      username,
+      password,
+      role: req.body.role || 'farmer',
+    })
 
-if(existing){
- return res.status(400).send("User already exists")
-}
+    await user.save()
 
-const user = new User({
- username,
- password,
- role:"admin"
+    res.send('User created')
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Error creating user')
+  }
 })
-
-await user.save()
-
-res.send("User created")
-
-}catch(err){
-console.error(err)
-res.status(500).send("Error creating user")
-}
-
-})
-
 
 /* ================= RESET PASSWORD ================= */
 
-router.post("/reset-password", async (req,res)=>{
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { username, newPassword } = req.body
 
-try{
+    const user = await User.findOne({ username })
 
-const {username,newPassword} = req.body
+    if (!user) {
+      return res.status(404).send('User not found')
+    }
 
-const user = await User.findOne({username})
+    user.password = newPassword
+    await user.save()
 
-if(!user){
- return res.status(404).send("User not found")
-}
-
-user.password = newPassword
-await user.save()
-
-res.send("Password updated")
-
-}catch(err){
-console.error(err)
-res.status(500).send("Error resetting password")
-}
-
+    res.send('Password updated')
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Error resetting password')
+  }
 })
-
 
 /* ================= LOGIN ================= */
 
-router.post("/login", async (req,res)=>{
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body || {}
 
-try{
+    if (!username || !password) {
+      return res.status(400).send('Missing credentials')
+    }
 
-const {username,password} = req.body || {}
+    /* LOCK CHECK */
 
-if(!username || !password){
- return res.status(400).send("Missing credentials")
-}
+    if (loginAttempts[username] && loginAttempts[username].count >= 5) {
+      const lockTime = loginAttempts[username].time
 
-/* LOCK CHECK */
+      if (Date.now() - lockTime < 60000) {
+        return res.status(429).send('Account locked. Try again later.')
+      } else {
+        delete loginAttempts[username]
+      }
+    }
 
-if(loginAttempts[username] && loginAttempts[username].count >= 5){
+    const { role } = req.body
 
- const lockTime = loginAttempts[username].time
+    const user = await User.findOne({ username })
 
- if(Date.now() - lockTime < 60000){
-  return res.status(429).send("Account locked. Try again later.")
- }else{
-  delete loginAttempts[username]
- }
+    if (!user || user.password !== password) {
+      if (!loginAttempts[username]) {
+        loginAttempts[username] = { count: 1, time: Date.now() }
+      } else {
+        loginAttempts[username].count++
+        loginAttempts[username].time = Date.now()
+      }
 
-}
+      console.log('Failed login attempt:', username)
 
-const user = await User.findOne({username})
+      await sendAlert(`Oops! Someone just tried to log in with the username "${username}" but got the password wrong. If this wasn't you, please keep an eye out!\n\nLocation: ${req.ip}\nAttempts: ${loginAttempts[username].count}`, 'security')
 
-if(!user || user.password !== password){
+      return res.status(403).send('Invalid credentials')
+    }
 
- if(!loginAttempts[username]){
-  loginAttempts[username] = {count:1,time:Date.now()}
- }else{
-  loginAttempts[username].count++
-  loginAttempts[username].time = Date.now()
- }
+    if (role && user.role !== role) {
+      return res.status(403).send(`Access Denied: This account is not registered as a ${role}.`)
+    }
 
- console.log("Failed login attempt:", username)
+    /* SUCCESS */
 
- await sendAlert(`🚨 Failed login attempt
-User: ${username}
-IP: ${req.ip}
-Attempts: ${loginAttempts[username].count}
-Time: ${new Date().toLocaleString()}`)
+    delete loginAttempts[username]
 
- return res.status(403).send("Invalid credentials")
-}
+    const token = jwt.sign({ id: user._id, role: user.role }, 'SECRET_KEY', { expiresIn: '1h' })
 
-/* SUCCESS */
-
-delete loginAttempts[username]
-
-const token = jwt.sign(
- {id:user._id, role:user.role},
- "SECRET_KEY",
- {expiresIn:"1h"}
-)
-
-res.json({token})
-
-}catch(err){
-
-console.error(err)
-res.status(500).send("Server error")
-
-}
-
+    res.json({ token, role: user.role || 'farmer' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Server error')
+  }
 })
 
 module.exports = router

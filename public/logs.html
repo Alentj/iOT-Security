@@ -1,38 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Security Logs</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Security Logs | Secure IoT Platform</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
 
-<body>
+  <body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 20px;
+        "
+      >
+        <h2 style="margin: 0; padding: 24px 0 24px 24px">
+          <i class="fa-solid fa-leaf"></i> SmartAgri
+        </h2>
+        <button class="mobile-close-btn" onclick="toggleSidebar()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Overview</a>
+        <a href="devices.html"><i class="fa-solid fa-satellite-dish"></i> Devices</a>
+        <a href="alerts.html"><i class="fa-solid fa-bell"></i> Alerts</a>
+        <a href="analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+        <a href="logs.html" class="active"><i class="fa-solid fa-rectangle-list"></i> Logs</a>
+      </div>
+    </nav>
 
-<div class="sidebar">
-<h2>IoT Panel</h2>
+    <!-- MAIN -->
+    <main class="main">
+      <!-- TOP NAVBAR -->
+      <div class="top-navbar">
+        <div class="nav-left">
+          <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+        <div class="search-bar">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+        <div class="nav-right">
+          <div class="nav-profile">
+            <div class="avatar" id="navAvatar" title="">U</div>
+          </div>
+          <span class="badge" id="navRoleBadge" style="font-size: 0.7rem; padding: 3px 8px"
+            >Role</span
+          >
+          <button class="logout-btn" onclick="logout()" title="Logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
 
-<a href="dashboard.html">Dashboard</a>
-<a href="devices.html">Devices</a>
-<a href="logs.html">Security Logs</a>
+      <header class="header">
+        <h1><i class="fa-solid fa-rectangle-list"></i> Security Logs</h1>
+        <p>Historical audit trail of all access events.</p>
+      </header>
 
-</div>
+      <table id="logTable">
+        <thead>
+          <tr>
+            <th>Event Action</th>
+            <th>Origin IP</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
 
-<div class="main">
-
-<h2>Security Logs</h2>
-
-<table id="logTable">
-
-<tr>
-<th>Event</th>
-<th>IP</th>
-<th>Time</th>
-</tr>
-
-</table>
-
-</div>
-
-<script src="app.js"></script>
-
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

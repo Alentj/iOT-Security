@@ -1,10 +1,8 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const DeviceSchema = new mongoose.Schema({
-
- device_id:String,
- token:String
-
+  device_id: String,
+  token: String,
 })
 
-module.exports = mongoose.model("Device",DeviceSchema)
+module.exports = mongoose.model('Device', DeviceSchema)

@@ -1,33 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Alerts</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alerts | Secure IoT Platform</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
 
-<body>
+  <body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 20px;
+        "
+      >
+        <h2 style="margin: 0; padding: 24px 0 24px 24px">
+          <i class="fa-solid fa-leaf"></i> SmartAgri
+        </h2>
+        <button class="mobile-close-btn" onclick="toggleSidebar()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Overview</a>
+        <a href="devices.html"><i class="fa-solid fa-satellite-dish"></i> Devices</a>
+        <a href="alerts.html" class="active"><i class="fa-solid fa-bell"></i> Alerts</a>
+        <a href="analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+        <a href="logs.html"><i class="fa-solid fa-rectangle-list"></i> Logs</a>
+      </div>
+    </nav>
 
-<div class="sidebar">
-<h2>IoT Panel</h2>
-<a href="dashboard.html">Overview</a>
-<a href="devices.html">Devices</a>
-<a href="alerts.html">Alerts</a>
-<a href="analytics.html">Analytics</a>
-</div>
+    <!-- MAIN -->
+    <main class="main">
+      <!-- TOP NAVBAR -->
+      <div class="top-navbar">
+        <div class="nav-left">
+          <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+        <div class="search-bar">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+        <div class="nav-right">
+          <div class="nav-profile">
+            <div class="avatar" id="navAvatar" title="">U</div>
+          </div>
+          <span class="badge" id="navRoleBadge" style="font-size: 0.7rem; padding: 3px 8px"
+            >Role</span
+          >
+          <button class="logout-btn" onclick="logout()" title="Logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
 
-<div class="main">
+      <header class="header">
+        <h1><i class="fa-solid fa-triangle-exclamation"></i> Security Alerts</h1>
+        <p>Live logging of threat detection and anomalous activities.</p>
+      </header>
 
-<h1>🚨 Security Alerts</h1>
+      <div
+        style="
+          background: var(--surface-color);
+          padding: 24px;
+          border-radius: 16px;
+          border: 1px solid var(--border-color);
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <ul
+          id="eventFeed"
+          style="
+            max-height: 70vh;
+            overflow-y: auto;
+            background: transparent;
+            border: none;
+            padding: 0;
+          "
+        ></ul>
+      </div>
+    </main>
 
-<ul id="eventFeed"></ul>
-
-</div>
-
-<script src="app.js"></script>
-
-<script>
-loadSecurityEvents()
-</script>
-
-</body>
+    <script src="app.js"></script>
+    <script>
+      loadSecurityEvents()
+    </script>
+  </body>
 </html>

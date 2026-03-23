@@ -1,93 +1,154 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Dashboard</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | SmartAgri Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
 
-<body>
+  <body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 20px;">
+        <h2 style="margin: 0;"><i class="fa-solid fa-microchip"></i> SmartAgri</h2>
+        <button class="mobile-close-btn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+        <a href="devices.html"><i class="fa-solid fa-server"></i> Devices</a>
+        <a href="alerts.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+        <a href="logs.html"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </nav>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <div class="top-navbar">
+        <div class="nav-left">
+          <h1 style="font-size: 1.5rem; font-weight: 500;">
+            <span id="welcomeGreeting">Welcome</span>, <span id="welcomeName" style="color: var(--primary)">User</span>
+          </h1>
+        </div>
+        <div class="nav-right">
+          <span class="badge" id="navRoleBadge">Role</span>
+          <div class="avatar" id="navAvatar">U</div>
+          <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+      </div>
 
-<h2>⚡ IoT Panel</h2>
+      <!-- ROW 1: KEY METRICS -->
+      <section class="metric-row">
+        <div class="card metric-card">
+          <h3><i class="fa-solid fa-satellite-dish"></i> Total Devices</h3>
+          <p id="totalDevices">0</p>
+        </div>
+        <div class="card metric-card">
+          <h3><i class="fa-solid fa-signal"></i> Online Nodes</h3>
+          <p id="onlineDevices" class="green">0</p>
+        </div>
+        <div class="card metric-card">
+          <h3><i class="fa-solid fa-droplet"></i> Avg. Moisture</h3>
+          <p id="latestMoisture">-</p>
+        </div>
+          <div class="card p-4">
+            <h3 class="text-sm font-medium text-gray-400">Active Alerts</h3>
+            <p id="alertCount" class="text-3xl font-bold mt-2">0</p>
+            <button onclick="resetSecurity()" class="mt-4 w-full py-1.5 text-xs font-medium border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors">
+              Reset Security Blacklist
+            </button>
+          </div>
+      </section>
 
-<a href="dashboard.html">🏠 Overview</a>
-<a href="devices.html">📡 Devices</a>
-<a href="alerts.html">🚨 Alerts</a>
-<a href="analytics.html">📊 Analytics</a>
+      <!-- ROW 2: PRIMARY ANALYTICS & CONTROL -->
+      <section class="main-monitoring">
+        <div class="card chart-large-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0;"><i class="fa-solid fa-chart-line"></i> Real-time Moisture Analytics</h3>
+            <div class="chart-filters-slim" style="display: flex; gap: 8px;">
+              <button class="filter-btn sm active" data-hours="24">24H</button>
+              <button class="filter-btn sm" data-hours="168">7D</button>
+            </div>
+          </div>
+          <div class="chart-container-fixed">
+            <canvas id="moistureChart"></canvas>
+          </div>
+        </div>
 
-</div>
+        <div class="card control-box">
+          <h3 style="margin-bottom: 25px;"><i class="fa-solid fa-sliders"></i> Irrigation Control</h3>
+          <div class="control-inner">
+            <div class="status-row">
+              <span id="motorStatusBadge" class="badge-status">DISCONNECTED</span>
+              <button id="motorToggleBtn" class="action-btn-slim" onclick="toggleMotor()">Turn ON</button>
+            </div>
+            
+            <div class="auto-config-box">
+              <div class="config-top">
+                <span style="font-weight: 500;"><i class="fa-solid fa-robot"></i> Smart Irrigation</span>
+                <label class="switch">
+                  <input type="checkbox" id="autoIrrigateToggle" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="slider-wrap">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem;">
+                  <span style="color: var(--text-dim);">Threshold Limit</span>
+                  <span id="thresholdDisplay" style="color: var(--primary); font-weight: 700;">30</span>
+                </div>
+                <input type="range" id="moistureThreshold" min="0" max="100" value="30" class="range-pro">
+              </div>
+              <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 15px; line-height: 1.4;">
+                System will automate irrigation cycles when levels drop below threshold.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- MAIN -->
-<div class="main">
+      <!-- ROW 3: SYSTEM DETAILS -->
+      <section class="details-row">
+        <div class="card grid-card">
+          <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-list-check"></i> Connected Sensor Inventory</h3>
+          <div class="table-scroll">
+            <table id="deviceTable">
+              <thead>
+                <tr>
+                  <th>Device Identifier</th>
+                  <th>Last Reading</th>
+                  <th>Connectivity</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
 
-<!-- HEADER -->
-<div class="header">
-<h1>⚡ IoT Security Dashboard</h1>
-<p>Real-time monitoring & threat detection</p>
-</div>
+        <div class="env-stack">
+          <div class="card nutrient-box">
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-flask"></i> Soil Composition (mg/kg)</h3>
+            <div class="n-grid-pro">
+              <div class="n-pill"><span>Nitrogen</span><strong>44.2</strong></div>
+              <div class="n-pill"><span>Phosphorus</span><strong>11.8</strong></div>
+              <div class="n-pill"><span>Potassium</span><strong>27.5</strong></div>
+            </div>
+          </div>
+          <div class="card climate-box">
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-temperature-half"></i> Ambient Conditions</h3>
+            <div class="climate-pro-wrap">
+              <div class="temp-big">22<small style="font-size: 1rem; color: var(--text-dim);">°C</small></div>
+              <div class="climate-mini-stats">
+                <div style="margin-bottom: 4px;"><i class="fa-solid fa-droplet"></i> 45% Humidity</div>
+                <div><i class="fa-solid fa-wind"></i> 11.2 km/h Winds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
-<!-- CARDS -->
-<div class="cards">
-
-<div class="card">
-<h3>Total Devices</h3>
-<p id="totalDevices">0</p>
-</div>
-
-<div class="card">
-<h3>Online Devices</h3>
-<p id="onlineDevices">0</p>
-</div>
-
-<div class="card">
-<h3>Latest Moisture</h3>
-<p id="latestMoisture">-</p>
-</div>
-
-<div class="card">
-<h3>Security Alerts</h3>
-<p id="alertCount">0</p>
-</div>
-
-</div>
-
-<!-- CHART -->
-<h2>📊 Moisture Chart 🔴 LIVE</h2>
-<canvas id="moistureChart"></canvas>
-
-<!-- DEVICE STATUS -->
-<h2>📡 Device Status</h2>
-<table id="deviceTable">
-<tr>
-<th>Device</th>
-<th>Moisture</th>
-<th>Status</th>
-</tr>
-</table>
-
-<!-- SENSOR DATA -->
-<h2>📋 Sensor Data</h2>
-<table id="dataTable">
-<tr>
-<th>Device</th>
-<th>Moisture</th>
-</tr>
-</table>
-
-<!-- EVENTS -->
-<h2>🚨 Security Events</h2>
-<ul id="eventFeed"></ul>
-
-<!-- ACTIVITY -->
-<h2>📡 Device Activity</h2>
-<ul id="deviceActivity"></ul>
-
-</div>
-
-<script src="app.js"></script>
-
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

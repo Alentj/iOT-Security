@@ -1,29 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>IoT Security Login</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure IoT Platform | Login</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
 
-<body class="login-page">
+  <body class="login-page">
+    <div class="login-box">
+      <h2><i class="fa-solid fa-shield-halved"></i> Secure IoT</h2>
 
-<div class="login-box">
+      <div class="input-group">
+        <select
+          id="role"
+          style="
+            width: 100%;
+            background: rgba(6, 78, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px 20px;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 1.05rem;
+            margin-bottom: 24px;
+            appearance: none;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+          "
+        >
+          <option value="farmer">🚜 Farmer (Field Operations)</option>
+          <option value="owner">💼 Owner (Ecosystem Monitor)</option>
+          <option value="admin">🛡️ Administrator (Full Access)</option>
+        </select>
+      </div>
 
-<h2>IoT Security System</h2>
+      <div class="input-group">
+        <input id="username" placeholder="Username" autocomplete="off" />
+      </div>
+      <div class="input-group">
+        <input id="password" type="password" placeholder="Password" />
+      </div>
 
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
+      <button onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
 
-<button onclick="login()">Login</button>
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px">
+        <button class="secondary-btn" onclick="registerUser()">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+        <button class="secondary-btn" onclick="resetPassword()">
+          <i class="fa-solid fa-key"></i> Forgot Password
+        </button>
+      </div>
+    </div>
 
-<br><br>
-
-<button onclick="registerUser()">Create Account</button>
-<button onclick="resetPassword()">Forgot Password</button>
-
-</div>
-
-<script src="app.js"></script>
-
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

@@ -1,41 +1,32 @@
-const Device = require("../models/Device")
-const SecurityLog = require("../models/SecurityLog")
-const sendAlert = require("../utils/telegram")
+const Device = require('../models/Device')
+const SecurityLog = require('../models/SecurityLog')
+const sendAlert = require('../utils/telegram')
+const { recordFailure } = require('./ipBlacklist')
 
-module.exports = async (req,res,next)=>{
+module.exports = async (req, res, next) => {
+  try {
+    const { device_id, token } = req.body
 
- try{
+    const device = await Device.findOne({ device_id })
 
-  const {device_id, token} = req.body
+    if (!device || device.token !== token) {
+      // Record failure for blacklisting
+      recordFailure(req.ip)
 
-  const device = await Device.findOne({device_id})
+      // Save attack log
+      await SecurityLog.create({
+        ip: req.ip,
+        event: 'Invalid device authentication attempt',
+      })
+      
+      sendAlert(`Wait a second! An unknown device tried to connect to our system from this address: ${req.ip}. I've blocked it just to be safe.`, 'security')
 
-  if(!device || device.token !== token){
+      return res.status(403).send('Unauthorized device')
+    }
 
-   // Save attack log
-   await SecurityLog.create({
-    ip: req.ip,
-    event: "Invalid device authentication attempt"
-   })
-   const sendAlert = require("../utils/telegram")
-
-
-
- sendAlert("⚠️ Unauthorized device attempt from IP: " + req.ip)
-
- return res.status(403).send("Unauthorized device")
-
-}
-
-   // Send Telegram alert
-  
-
-  next()
-
- }catch(err){
-
-  return res.status(500).send("Server error")
-
- }
-
+    next()
+  } catch (err) {
+    console.error('Auth device error:', err)
+    return res.status(500).send('Server error')
+  }
 }
