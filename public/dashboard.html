@@ -53,13 +53,13 @@
           <h3><i class="fa-solid fa-droplet"></i> Avg. Moisture</h3>
           <p id="latestMoisture">-</p>
         </div>
-          <div class="card p-4">
-            <h3 class="text-sm font-medium text-gray-400">Active Alerts</h3>
-            <p id="alertCount" class="text-3xl font-bold mt-2">0</p>
-            <button onclick="resetSecurity()" class="mt-4 w-full py-1.5 text-xs font-medium border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors">
-              Reset Security Blacklist
-            </button>
-          </div>
+        <div class="card metric-card">
+          <h3><i class="fa-solid fa-shield-virus"></i> Active Alerts</h3>
+          <p id="alertCount" class="red">0</p>
+          <button onclick="resetSecurity()" class="btn-reset">
+            Reset Blacklist
+          </button>
+        </div>
       </section>
 
       <!-- ROW 2: PRIMARY ANALYTICS & CONTROL -->
@@ -98,7 +98,7 @@
                   <span style="color: var(--text-dim);">Threshold Limit</span>
                   <span id="thresholdDisplay" style="color: var(--primary); font-weight: 700;">30</span>
                 </div>
-                <input type="range" id="moistureThreshold" min="0" max="100" value="30" class="range-pro">
+                <input type="range" id="moistureThreshold" min="0" max="1024" value="500" class="range-pro">
               </div>
               <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 15px; line-height: 1.4;">
                 System will automate irrigation cycles when levels drop below threshold.

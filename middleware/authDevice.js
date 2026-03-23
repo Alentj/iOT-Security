@@ -8,25 +8,24 @@ module.exports = async (req, res, next) => {
     const { device_id, token } = req.body
 
     const device = await Device.findOne({ device_id })
-
-    if (!device || device.token !== token) {
-      // Record failure for blacklisting
-      recordFailure(req.ip)
-
-      // Save attack log
-      await SecurityLog.create({
-        ip: req.ip,
-        event: 'Invalid device authentication attempt',
-      })
-      
-      sendAlert(`Wait a second! An unknown device tried to connect to our system from this address: ${req.ip}. I've blocked it just to be safe.`, 'security')
-
-      return res.status(403).send('Unauthorized device')
+    if (device && device.token === token) {
+      return next()
     }
 
-    next()
+    // Auth Failed
+    recordFailure(req.ip)
+    
+    await SecurityLog.create({
+      event: 'Failed Authentication',
+      ip: req.ip,
+      details: `Device ID: ${device_id} tried to connect with invalid token.`,
+      severity: 'high'
+    })
+
+    sendAlert(`🚨 Alert! Someone tried to connect as device ${device_id} from ${req.ip} but used the wrong security token! I've blocked the attempt.`, 'security')
+
+    res.status(401).send('ERR_AUTH: Device authentication failed')
   } catch (err) {
-    console.error('Auth device error:', err)
-    return res.status(500).send('Server error')
+    res.status(500).send('Internal Server Error')
   }
 }

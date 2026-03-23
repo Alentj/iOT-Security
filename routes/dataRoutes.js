@@ -7,8 +7,12 @@ const replayProtection = require('../middleware/replayProtection')
 const anomalyDetection = require('../security/anomalyDetection')
 const { checkBlacklist, recordFailure } = require('../middleware/ipBlacklist')
 
+// 🕒 TIME SYNC HEARTBEAT (For Hardware)
+router.get('/sync', (req, res) => {
+  res.json({ serverTime: Date.now() })
+})
+
 // 🔥 POST (ESP sends data)
-// Security Layers: Rate Limit -> IP Blacklist -> Auth -> Replay -> Anomaly -> Schema
 router.post('/data', checkBlacklist, authDevice, replayProtection, anomalyDetection, async (req, res) => {
   try {
     const { device_id, token, soil_moisture, timestamp } = req.body
@@ -20,12 +24,12 @@ router.post('/data', checkBlacklist, authDevice, replayProtection, anomalyDetect
 
     if (extraFields.length > 0) {
       recordFailure(req.ip)
-      return res.status(400).send(`Security Violation: Unexpected fields detected: ${extraFields.join(', ')}`)
+      return res.status(400).send(`ERR_SCHEMA: Unexpected fields: ${extraFields.join(', ')}`)
     }
 
     if (typeof soil_moisture !== 'number' || typeof timestamp !== 'number') {
       recordFailure(req.ip)
-      return res.status(400).send('Security Violation: Invalid data types')
+      return res.status(400).send('ERR_TYPES: Invalid data types')
     }
 
     await SensorData.create({

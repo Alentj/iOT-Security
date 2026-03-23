@@ -8,6 +8,11 @@ module.exports = {
     const ip = req.ip
     const now = Date.now()
 
+    // Always allow localhost for demos
+    if (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1') {
+      return next()
+    }
+
     if (blacklisted[ip]) {
       if (now < blacklisted[ip]) {
         return res.status(403).send('Your IP is temporarily blacklisted due to multiple security violations.')

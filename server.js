@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/adminRoutes')
 const deviceRoutes = require('./routes/deviceRoutes')
 
 const app = express() // ✅ MUST BE HERE
+app.set('trust proxy', 1);
 
 connectDB()
 
@@ -24,6 +25,9 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use(helmet())
 app.use(limiter)
+
+// Root Redirect
+app.get('/', (req, res) => res.redirect('/login.html'))
 
 /* ROUTES */
 
