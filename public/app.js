@@ -177,7 +177,7 @@ function renderChart(data) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   })
   const values = data.map((d) => d.moisture)
-  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 30)
+  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 500)
 
   if (chart) {
     chart.data.labels = labels
@@ -325,7 +325,7 @@ function checkAutoIrrigate(data) {
   if (data.length === 0) return
   const moisture = data[data.length - 1].soil_moisture
   const isAuto = document.getElementById('autoIrrigateToggle')?.checked
-  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 30)
+  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 500)
 
   if (isAuto && moisture < threshold && !currentMotorStatus) {
     const speech = new SpeechSynthesisUtterance("pump turn on")
