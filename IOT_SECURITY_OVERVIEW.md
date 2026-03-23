@@ -1,40 +1,37 @@
-# SmartAgri IoT Platform: Advanced 7-Layer Security
+# 🛡️ SmartAgri: 7-Layer IoT Security Matrix
 
-This documentation specifies the comprehensive 7-layer security matrix designed to protect the SmartAgri IoT ecosystem.
+This document outlines the multi-layered defensive architecture implemented to protect the SmartAgri IoT ecosystem against unauthorized access, data injection, and network-level attacks.
 
-## 🛡️ The 7 Layers of Defense
+## 🚀 The 7 Layers of Defense
 
-### 1. Device Authentication (Hardware Handshake)
-- Every IoT node must present a unique `device_id` and a secure `token`.
+### 1. Intelligent Rate Limiting (Flood Guard)
+- **Automatic throttling**: Prevents Denial-of-Service (DoS) and brute-force attacks by limiting any single IP to 100 requests per minute.
 
-### 2. Replay Attack Protection (Temporal Guard)
-- Requests must include a cryptographic `timestamp` within a **30-second window**.
+### 2. Device authentication (Hardware Handshake)
+- **Token-based security**: Every IoT node must present a unique `device_id` and a cryptographically secure token stored in the encrypted database.
 
-### 3. Automated IP Blacklisting (Attack Deflection)
-- **Automatic Defense**: If an IP triggers 5 security violations (auth fails, tampering), it is automatically **BLACKLISTED** for 1 hour. No data from that IP will be processed.
+### 3. Telegram Shield (Instant Awareness)
+- **Proactive Alerts**: Administrators receive encrypted, real-time Telegram notifications for every security violation or blocked attack attempt.
 
-### 4. Strict Payload Schema Validation (Injection Guard)
-- The API strictly validates the incoming JSON. Any "extra" fields or "malicious" characters often used in hacking (SQL injection, etc.) trigger an immediate 400 rejection.
+### 4. Replay Protection (Temporal Guard)
+- **Smart Auto-Sync**: Every sensor packet is signed with a timestamp. The server verifies freshness within a temporal window, preventing "man-in-the-middle" message injection.
 
-### 5. Semantic Anomaly Detection (Logic Filter)
-- Data is analyzed for operational logic (e.g., soil moisture must be between 0-100%).
+### 5. Behavioral Anomaly Detection (Semantic Filter)
+- **Logic Validation**: Incoming data is analyzed for operational realism (e.g., soil moisture validated against raw ADC 0-1024 range). Outliers trigger immediate 400 rejections.
 
-### 6. Intelligent Rate Limiting (Flood Guard)
-- Global traffic monitoring limits any single IP to 100 requests per minute.
+### 6. Automated IP Blacklisting (Attack Deflection)
+- **Autonomous Defense**: If an IP triggers multiple security violations (auth fails, tampering), the system automatically **bans the IP** at the firewall level for 1 hour.
 
-### 7. Real-time Telegram Alerts (Instant Awareness)
-- The administrator receives instant encrypted notifications for every blocked attack.
+### 7. Strict Payload Schema Validation (Injection Guard)
+- **Zero-Trust Payload**: The API validates the JSON structure against a strict whitelist. Any "extra" fields or malicious characters (SQLi/XSS) result in immediate rejection.
 
 ---
 
-## 🛠️ Demonstration: Advanced Admin Control
+## 🛠️ Graduation Demo Features
+- **Admin Security Dashboard**: View real-time security logs and active alerts.
+- **One-Click Reset**: Administrative override to clear the IP blacklist during live demonstrations.
+- **Hardware-Software Handshake**: Verified end-to-end integration with ESP8266/Arduino hardware.
 
-To solve the "Demo Paradox" (where you get blocked while showing an attack), I have implemented an **Administrative Reset**:
-
-1.  **Run the Attack**: Use `security_demo.sh` to trigger the blacklist.
-2.  **Verify Blocking**: Show that your sensor data stops updating (Dashboard goes red/offline for that device).
-3.  **The Reveal**: On the Dashboard under **Active Alerts**, click **"Reset Security Blacklist"**.
-4.  **Proof of Control**: Show that the system instantly resumes normal operations!
-
-> [!IMPORTANT]
-> This platform follows a "Security-by-Design" approach, providing both automated defense and administrative oversight.
+## 📦 Repository Information
+- **GitHub**: [Alentj/iOT-Security](https://github.com/Alentj/iOT-Security.git)
+- **Stack**: Node.js, Express, MongoDB, ESP8266 (C++), Chart.js
