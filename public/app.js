@@ -38,7 +38,7 @@ async function loadDashboard() {
   fetchMotorStatus()
   fetchAlertCount()
   refreshDashboardData() // Initial load
-  
+
   // Graph Load
   const graphRes = await fetch('/admin/graph-data', {
     headers: { Authorization: 'Bearer ' + token },
@@ -104,6 +104,15 @@ async function refreshDashboardData() {
     updateDeviceGrid(devices)
     updateDeviceMetrics(devices)
   }
+
+  // 3. Fetch Graph Data (Update Chart!)
+  const graphRes = await fetch('/admin/graph-data', {
+    headers: { Authorization: 'Bearer ' + token },
+  })
+  if (graphRes.ok) {
+    allGraphData = await graphRes.json()
+    renderChart(allGraphData)
+  }
 }
 
 function updateDeviceGrid(devices) {
@@ -123,8 +132,8 @@ function updateDeviceGrid(devices) {
 
 function updateDeviceMetrics(devices) {
   let online = 0
-  devices.forEach(d => { if(d.status === 'Online') online++ })
-  
+  devices.forEach(d => { if (d.status === 'Online') online++ })
+
   const totalEl = document.getElementById('totalDevices')
   const onlineEl = document.getElementById('onlineDevices')
   if (totalEl) totalEl.innerText = devices.length
@@ -177,13 +186,13 @@ function renderChart(data) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   })
   const values = data.map((d) => d.moisture)
-  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 500)
+  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 30)
 
   if (chart) {
     chart.data.labels = labels
     chart.data.datasets[0].data = values
     if (chart.options.plugins.thresholdLine) {
-        chart.options.plugins.thresholdLine.value = threshold
+      chart.options.plugins.thresholdLine.value = threshold
     }
     chart.update()
     return
@@ -192,14 +201,14 @@ function renderChart(data) {
   const canvas = document.getElementById('moistureChart')
   if (!canvas) return
   const ctx = canvas.getContext('2d')
-  
+
   const thresholdPlugin = {
     id: 'thresholdLine',
     beforeDraw(chart, args, options) {
       const { ctx, chartArea: { left, right }, scales: { y } } = chart
       if (!y) return
       const yPos = y.getPixelForValue(options.value)
-      
+
       ctx.save()
       ctx.strokeStyle = '#ef4444'
       ctx.setLineDash([5, 5])
@@ -208,7 +217,7 @@ function renderChart(data) {
       ctx.moveTo(left, yPos)
       ctx.lineTo(right, yPos)
       ctx.stroke()
-      
+
       ctx.fillStyle = '#ef4444'
       ctx.font = '500 11px Outfit'
       ctx.fillText(`Limit: ${options.value}`, left + 5, yPos - 5)
@@ -245,15 +254,15 @@ function renderChart(data) {
         }
       },
       scales: {
-        x: { 
-          grid: { display: false }, 
-          ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } } 
+        x: {
+          grid: { display: false },
+          ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } }
         },
-        y: { 
-          min: 0, 
-          max: 1100, 
-          grid: { color: 'rgba(255,255,255,0.03)' }, 
-          ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } } 
+        y: {
+          min: 0,
+          max: 1100,
+          grid: { color: 'rgba(255,255,255,0.03)' },
+          ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } }
         }
       }
     },
@@ -325,7 +334,7 @@ function checkAutoIrrigate(data) {
   if (data.length === 0) return
   const moisture = data[data.length - 1].soil_moisture
   const isAuto = document.getElementById('autoIrrigateToggle')?.checked
-  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 500)
+  const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 30)
 
   if (isAuto && moisture < threshold && !currentMotorStatus) {
     const speech = new SpeechSynthesisUtterance("pump turn on")
