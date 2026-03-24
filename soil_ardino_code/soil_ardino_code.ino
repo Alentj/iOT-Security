@@ -1,8 +1,8 @@
-#include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
 
-const char* ssid = "BSNL";
-const char* password = "Joyjacob5115";
+const char *ssid = "BSNL";
+const char *password = "Joyjacob5115";
 
 // 👉 FIXED: Must be HTTP (not HTTPS) for local port 3000
 const String serverURL = "http://192.168.1.71:3000/api/data";
@@ -32,10 +32,11 @@ void setup() {
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     int moisture = analogRead(sensorPin);
-    Serial.print("Moisture: "); Serial.println(moisture);
+    Serial.print("Moisture: ");
+    Serial.println(moisture);
 
-    // Pump Logic
-    if (moisture > 700) {
+    // Pump Logic (Now: < 700 is DRY)
+    if (moisture < 700) {
       digitalWrite(pumpPin, HIGH);
       Serial.println("Pump ON");
     } else {
@@ -57,9 +58,10 @@ void loop() {
 
     Serial.println("Sending to: " + serverURL);
     int httpResponseCode = http.POST(jsonData);
-    Serial.print("Response: "); Serial.println(httpResponseCode);
+    Serial.print("Response: ");
+    Serial.println(httpResponseCode);
 
     http.end();
   }
-  delay(10000); 
+  delay(10000);
 }

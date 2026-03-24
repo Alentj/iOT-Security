@@ -232,8 +232,8 @@ function renderChart(data) {
       datasets: [{
         label: 'Moisture',
         data: values,
-        backgroundColor: (context) => context.raw > threshold ? 'rgba(239, 68, 68, 0.6)' : 'rgba(16, 185, 129, 0.6)',
-        borderColor: (context) => context.raw > threshold ? '#ef4444' : '#10B981',
+        backgroundColor: (context) => context.raw < threshold ? 'rgba(239, 68, 68, 0.6)' : 'rgba(16, 185, 129, 0.6)',
+        borderColor: (context) => context.raw < threshold ? '#ef4444' : '#10B981',
         borderWidth: 1,
         borderRadius: 4
       }]
@@ -336,16 +336,16 @@ function checkAutoIrrigate(data) {
   const isAuto = document.getElementById('autoIrrigateToggle')?.checked
   const threshold = parseInt(document.getElementById('moistureThreshold')?.value || 30)
 
-  // 1024 = DRY, 300 = WET. 
-  // Turn ON if moisture > threshold (Dry)
-  if (isAuto && moisture > threshold && !currentMotorStatus) {
+  // 1024 = WET, 300 = DRY. 
+  // Turn ON if moisture < threshold (Dry)
+  if (isAuto && moisture < threshold && !currentMotorStatus) {
     const speech = new SpeechSynthesisUtterance("pump turn on")
     window.speechSynthesis.speak(speech)
     toggleMotor()
   } 
   
-  // Turn OFF if moisture < threshold (Wet)
-  else if (isAuto && moisture <= threshold && currentMotorStatus) {
+  // Turn OFF if moisture >= threshold (Wet)
+  else if (isAuto && moisture >= threshold && currentMotorStatus) {
     const speech = new SpeechSynthesisUtterance("pump turn off")
     window.speechSynthesis.speak(speech)
     toggleMotor()
