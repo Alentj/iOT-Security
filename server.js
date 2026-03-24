@@ -4,7 +4,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const helmet = require('helmet')
 
-const connectDB = require('./config/database')
+const { connectDB } = require('./config/database')
+const { resetBlacklist } = require('./middleware/ipBlacklist')
 const limiter = require('./middleware/rateLimiter')
 const errorHandler = require('./middleware/errorHandler')
 

@@ -31,17 +31,20 @@ void setup() {
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
-    int moisture = analogRead(sensorPin);
-    Serial.print("Moisture: ");
-    Serial.println(moisture);
+    // 🔄 LOGICAL FLIP: 1024 = Wet, 0 = Dry (Better for demo!)
+    int rawValue = analogRead(sensorPin);
+    int moisture = 1024 - rawValue; 
+    
+    Serial.print("Raw: "); Serial.print(rawValue);
+    Serial.print(" | Logical Moisture: "); Serial.println(moisture);
 
-    // Pump Logic (Now: < 700 is DRY)
-    if (moisture < 700) {
+    // Pump Logic (Now: < 300 is DRY)
+    if (moisture < 300) { 
       digitalWrite(pumpPin, HIGH);
-      Serial.println("Pump ON");
+      Serial.println("Pump ON (Dry detected)");
     } else {
       digitalWrite(pumpPin, LOW);
-      Serial.println("Pump OFF");
+      Serial.println("Pump OFF (Soil moistened)");
     }
 
     HTTPClient http;

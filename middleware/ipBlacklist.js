@@ -3,6 +3,14 @@ const sendAlert = require('../utils/telegram')
 let failures = {} // { ip: { count: 0, lastSeen: Date } }
 let blacklisted = {} // { ip: expiryDate }
 
+// 🛡️ SECURITY RESET FOR DEMO
+// Clears all blacklisted IPs every time you restart the server
+exports.resetBlacklist = () => {
+  failures = {} // Reset failures object
+  blacklisted = {} // Reset blacklisted object
+  console.log('🛡️  Security Blacklist Cleared (Ready for Demo!)');
+}
+
 module.exports = {
   checkBlacklist: (req, res, next) => {
     const ip = req.ip
