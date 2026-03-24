@@ -1,12 +1,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
-// 📶 Your Working Network Settings
-const char* ssid = "abcd";
-const char* password = "12345678";
-const String serverURL = "http://10.41.119.154:3000/api/data";
+// 📶 REPLACE WITH YOUR NETWORK SETTINGS
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const String serverURL = "http://YOUR_SERVER_IP:3000/api/data";
 
-// 🆔 Device Credentials
+// 🆔 YOUR DEVICE CREDENTIALS
 String device_id = "esp8266_1773813174090";
 String token = "2a5d1ee93b3bce13ca88efa73f0ff521";
 
@@ -31,14 +31,12 @@ void setup() {
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
-    // 📊 RAW DATA: We are now using the raw sensor value.
-    // 1024 = DRY (Air), 300 = WET (Water)
+    // 📊 RAW DATA: 1024 = DRY (Air), 300 = WET (Water)
     int moisture = analogRead(sensorPin); 
     
     Serial.print("Moisture Level: "); Serial.println(moisture);
 
-    // 💧 Pump Logic (matches your request: ABOVE threshold = ON)
-    // If moisture is HIGHER than threshold (Dry), turn on pump.
+    // 💧 Pump Logic: ABOVE threshold = ON (matches Raw behavior)
     if (moisture > 700) { 
       digitalWrite(pumpPin, HIGH);
       Serial.println("Pump ON (Dry Detected)");
