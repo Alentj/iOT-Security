@@ -1,8 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api')
 
-const bot = new TelegramBot('8737792132:AAE4v2rqzfoTKvPVceWrSoqs1zIWQ2b9uDE')
-
+// 🔐 Secure Token & Chat ID
+const botToken = '8737792132:AAE4v2rqzfoTKvPVceWrSoqs1zIWQ2b9uDE'
 const chatId = '-5024489623'
+
+const bot = new TelegramBot(botToken)
 
 async function sendAlert(message, type = 'info') {
   let icon = 'ℹ️'
@@ -11,9 +13,16 @@ async function sendAlert(message, type = 'info') {
   if (type === 'critical') icon = '🚨'
   if (type === 'system') icon = '🤖'
 
-  const formattedMsg = `${icon} *SmartAgri Notification*\n\n${message}\n\n_Time: ${new Date().toLocaleString()}_`
+  // 📝 HTML Formatting (More robust than Markdown for symbols like '_')
+  const formattedMsg = `${icon} <b>SmartAgri Notification</b>\n\n${message}\n\n<i>Time: ${new Date().toLocaleString()}</i>`
 
-  await bot.sendMessage(chatId, formattedMsg, { parse_mode: 'Markdown' })
+  try {
+    await bot.sendMessage(chatId, formattedMsg, { parse_mode: 'HTML' })
+  } catch (err) {
+    console.error('Telegram Send Error (HTML):', err.message)
+    // Fallback to plain text if HTML fails
+    await bot.sendMessage(chatId, `[${icon} SmartAgri] ${message}`).catch(e => console.error('Final Telegram Fallback Failed:', e.message))
+  }
 }
 
 module.exports = sendAlert
