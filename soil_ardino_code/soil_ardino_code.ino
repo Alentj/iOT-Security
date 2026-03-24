@@ -1,12 +1,12 @@
-#include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 
-const char *ssid = "BSNL";
-const char *password = "Joyjacob5115";
+// 📶 Your Working Network Settings
+const char* ssid = "abcd";
+const char* password = "12345678";
+const String serverURL = "http://10.41.119.154:3000/api/data";
 
-// 👉 FIXED: Must be HTTP (not HTTPS) for local port 3000
-const String serverURL = "http://192.168.1.71:3000/api/data";
-
+// 🆔 Device Credentials
 String device_id = "esp8266_1773813174090";
 String token = "2a5d1ee93b3bce13ca88efa73f0ff521";
 
@@ -31,27 +31,29 @@ void setup() {
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
-    // 🔄 LOGICAL FLIP: 1024 = Wet, 0 = Dry (Better for demo!)
+    // 🔄 LOGICAL FLIP: This makes 1024 = Wet and 0 = Dry.
+    // (Much better for showing your professors!)
     int rawValue = analogRead(sensorPin);
     int moisture = 1024 - rawValue; 
     
-    Serial.print("Raw: "); Serial.print(rawValue);
+    Serial.print("Raw Value: "); Serial.print(rawValue);
     Serial.print(" | Logical Moisture: "); Serial.println(moisture);
 
-    // Pump Logic (Now: < 300 is DRY)
-    if (moisture < 300) { 
+    // 💧 Pump Logic (matches the new numbers)
+    // If moisture is < 300 (which means it is DRY), turn on pump.
+    if (moisture < 300) {
       digitalWrite(pumpPin, HIGH);
-      Serial.println("Pump ON (Dry detected)");
+      Serial.println("Pump ON (Dry Detected)");
     } else {
       digitalWrite(pumpPin, LOW);
-      Serial.println("Pump OFF (Soil moistened)");
+      Serial.println("Pump OFF (Hydrated)");
     }
 
     HTTPClient http;
     http.begin(client, serverURL);
     http.addHeader("Content-Type", "application/json");
 
-    // Sending simple millis() timestamp (Supported by my new server update!)
+    // 🛡️ Sending data with Replay Protection (millis)
     String jsonData = "{";
     jsonData += "\"device_id\":\"" + device_id + "\",";
     jsonData += "\"token\":\"" + token + "\",";
@@ -61,10 +63,9 @@ void loop() {
 
     Serial.println("Sending to: " + serverURL);
     int httpResponseCode = http.POST(jsonData);
-    Serial.print("Response: ");
-    Serial.println(httpResponseCode);
+    Serial.print("Response: "); Serial.println(httpResponseCode);
 
     http.end();
   }
-  delay(10000);
+  delay(10000); 
 }
