@@ -16,6 +16,9 @@ router.get('/sync', (req, res) => {
 router.post('/data', checkBlacklist, authDevice, replayProtection, anomalyDetection, async (req, res) => {
   try {
     const { device_id, token, soil_moisture, timestamp } = req.body
+    
+    // 📢 DEMO LOG: Show arrival in terminal!
+    console.log(`[DATA] Received from ${device_id}: Moisture=${soil_moisture}% (TS: ${timestamp})`);
 
     // LAYER 7: STRICT SCHEMA VALIDATION
     const allowedFields = ['device_id', 'token', 'soil_moisture', 'timestamp']
